@@ -39,7 +39,7 @@
     <div class="container">
         <h1>Recibe nuestra asesoría en adhesivos y pegantes para darle la mejor solución a tu problema</h1>
         <p>Haz clic en el botón para iniciar la conversación con nuestro avatar inteligente.</p>
-        <button class="launch-button" onclick="mostrarAvatar()">Hablar ahora</button>
+        <button class="launch-button" id="btn-hablar">Hablar ahora</button>
     </div>
 
     <!-- Avatar HeyGen Embebido -->
@@ -49,54 +49,94 @@
               url=host+"/guest/streaming-embed?share=eyJxdWFsaXR5IjoiaGlnaCIsImF2YXRhck5hbWUiOiJQZWRyb19DYXN1YWxMb29rX3B1YmxpYyIsInByZXZpZXdJbWciOiJodHRwczovL2ZpbGVzMi5oZXlnZW4uYWkvYXZhdGFyL3YzLzRjYTdlYjc0NDJmNzRmZTBiYmNjMjA1ZjNmZTZmMjcxXzU1OTAwL3ByZXZpZXdfdGFyZ2V0LndlYnAiLCJuZWVkUmVtb3ZlQmFja2dyb3VuZCI6ZmFsc2UsImtub3dsZWRnZUJhc2VJZCI6Ijg0NWU0YmYxYmE2ODQ0YzJhOGU0NTViMTFjMzY3M2NkIiwidXNlcm5hbWUiOiIxNDUyOGVmOTE1MjM0MzI3YjE5NWYyMjQzNGIzYjQ1OSJ9&inIFrame=1",
               clientWidth=document.body.clientWidth,
               wrapDiv=document.createElement("div");
-        wrapDiv.id="heygen-streaming-embed";
-        const container=document.createElement("div");
-        container.id="heygen-streaming-container";
-        const stylesheet=document.createElement("style");
-        stylesheet.innerHTML=`#heygen-streaming-embed {
-          z-index: 9999;
-          position: fixed;
-          left: 40px;
-          bottom: 40px;
-          width: 200px;
-          height: 200px;
-          border-radius: 50%;
-          border: 2px solid #fff;
-          box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.12);
-          transition: all linear 0.1s;
-          overflow: hidden;
-          opacity: 0;
-          visibility: hidden;
-        }
-        #heygen-streaming-embed.show {
-          opacity: 1;
-          visibility: visible;
-        }
-        #heygen-streaming-embed.expand {
-          ${clientWidth<540?"height: 266px; width: 96%; left: 50%; transform: translateX(-50%);":"height: 366px; width: calc(366px * 16 / 9);"}
-          border: 0;
-          border-radius: 8px;
-        }
-        #heygen-streaming-container {
-          width: 100%;
-          height: 100%;
-        }
-        #heygen-streaming-container iframe {
-          width: 100%;
-          height: 100%;
-          border: 0;
-        }`;
-        const iframe=document.createElement("iframe");
-        iframe.allowFullscreen=!1;
-        iframe.title="Streaming Embed";
-        iframe.role="dialog";
-        iframe.allow="microphone";
-        iframe.src=url;
-        let visible=!1,initial=!1;
-        window.addEventListener("message",(e=>{
-          e.origin===host&&e.data&&e.data.type&&"streaming-embed"===e.data.type&&("init"===e.data.action?(initial=!0,wrapDiv.classList.toggle("show",initial)):"show"===e.data.action?(visible=!0,wrapDiv.classList.toggle("expand",visible)):"hide"===e.data.action&&(visible=!1,wrapDiv.classList.toggle("expand",visible)))
-        }));
+
+        wrapDiv.id = "heygen-streaming-embed";
+        const container = document.createElement("div");
+        container.id = "heygen-streaming-container";
+
+        const stylesheet = document.createElement("style");
+        stylesheet.innerHTML = `
+          #heygen-streaming-embed {
+            z-index: 9999;
+            position: fixed;
+            left: 40px;
+            bottom: 40px;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.12);
+            transition: all linear 0.1s;
+            overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+          }
+          #heygen-streaming-embed.show {
+            opacity: 1;
+            visibility: visible;
+          }
+          #heygen-streaming-embed.expand {
+            ${clientWidth < 540
+              ? "height: 266px; width: 96%; left: 50%; transform: translateX(-50%);"
+              : "height: 366px; width: calc(366px * 16 / 9);"}
+            border: 0;
+            border-radius: 8px;
+          }
+          #heygen-streaming-container {
+            width: 100%;
+            height: 100%;
+          }
+          #heygen-streaming-container iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+          }`;
+
+        const iframe = document.createElement("iframe");
+        iframe.allowFullscreen = !1;
+        iframe.title = "Streaming Embed";
+        iframe.role = "dialog";
+        iframe.allow = "microphone";
+        iframe.src = url;
+
+        let visible = false, initial = false;
+
+        window.addEventListener("message", (e) => {
+          if (e.origin === host && e.data?.type === "streaming-embed") {
+            if (e.data.action === "init") {
+              initial = true;
+              wrapDiv.classList.add("show");
+            }
+            if (e.data.action === "show") {
+              visible = true;
+              wrapDiv.classList.add("expand");
+            }
+            if (e.data.action === "hide") {
+              visible = false;
+              wrapDiv.classList.remove("expand");
+            }
+          }
+        });
+
         container.appendChild(iframe);
         wrapDiv.appendChild(stylesheet);
         wrapDiv.appendChild(container);
         document.body.appendChild(wrapDiv);
+
+        // ✅ Definir función global que se ejecuta cuando el botón se clickea
+        window.mostrarAvatar = () => {
+          wrapDiv.classList.add("show");
+          wrapDiv.classList.add("expand");
+        };
+
+        // ✅ Vincular el botón después de que todo está listo
+        window.addEventListener("DOMContentLoaded", () => {
+          const btn = document.getElementById("btn-hablar");
+          if (btn) {
+            btn.addEventListener("click", window.mostrarAvatar);
+          }
+        });
+      }(globalThis);
+    </script>
+</body>
+</html>
