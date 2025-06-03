@@ -20,29 +20,15 @@
         p {
             color: #555;
         }
-        .launch-button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 15px 25px;
-            font-size: 18px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 20px;
-        }
-        .launch-button:hover {
-            background-color: #45a049;
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Recibe nuestra asesoría en adhesivos y pegantes para darle la mejor solución a tu problema</h1>
-        <p>Haz clic en el botón para iniciar la conversación con nuestro avatar inteligente.</p>
-        <button class="launch-button" id="btn-hablar">Hablar ahora</button>
+        <p>Un asistente virtual inteligente aparecerá en pantalla para ayudarte.</p>
     </div>
 
-    <!-- Avatar HeyGen Embebido -->
+    <!-- Avatar HeyGen Embebido (sin botón) -->
     <script>
       !function(window){
         const host="https://labs.heygen.com",
@@ -122,20 +108,6 @@
         wrapDiv.appendChild(stylesheet);
         wrapDiv.appendChild(container);
         document.body.appendChild(wrapDiv);
-
-        // ✅ Definir función global que se ejecuta cuando el botón se clickea
-        window.mostrarAvatar = () => {
-          wrapDiv.classList.add("show");
-          wrapDiv.classList.add("expand");
-        };
-
-        // ✅ Vincular el botón después de que todo está listo
-        window.addEventListener("DOMContentLoaded", () => {
-          const btn = document.getElementById("btn-hablar");
-          if (btn) {
-            btn.addEventListener("click", window.mostrarAvatar);
-          }
-        });
       }(globalThis);
     </script>
 </body>
